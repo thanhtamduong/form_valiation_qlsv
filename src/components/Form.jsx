@@ -30,7 +30,7 @@ class Form extends Component {
         messageError = "Không hợp lệ!";
       }
     }
-    if (type === "maSV") {
+    if (type === "soDienThoai") {
       const regex = new RegExp(pattern);
       if (!regex.test(value)) {
         messageError = "Không hợp lệ!";
@@ -41,6 +41,7 @@ class Form extends Component {
     let values = { ...this.state.values, [name]: value };
     let errors = { ...this.state.errors, [name]: messageError };
     this.setState({ ...this.state, values: values, errors: errors }, () => {
+      this.renderButton();
       console.log(this.state);
     });
   };
@@ -52,26 +53,14 @@ class Form extends Component {
   renderButton = () => {
     let vali = true;
     for (let key in this.state.errors) {
-      if (this.state.errors[key] !== "") {
+      if (this.state.errors[key] !== "" || this.state.values[key] === "") {
         vali = false;
       }
     }
     this.setState({
       ...this.state,
-      vali,
+      vali: vali,
     });
-    if (vali) {
-      return (
-        <button type="submit" className="btn btn-success">
-          Thêm Sinh Viên
-        </button>
-      );
-    }
-    return (
-      <button type="submit" className="btn btn-success" disabled>
-        Thêm Sinh Viên
-      </button>
-    );
   };
 
   render() {
@@ -98,7 +87,6 @@ class Form extends Component {
                   <span>Họ tên</span>
                   <input
                     type="text"
-                    pattern="^[A-Za-z\x{00C0}-\x{00FF}][A-Za-z\x{00C0}-\x{00FF}\'\-]+([\ A-Za-z\x{00C0}-\x{00FF}][A-Za-z\x{00C0}-\x{00FF}\'\-]+)*"
                     className="form-control"
                     name="hoTen"
                     value={this.state.values.hoTen}
@@ -122,8 +110,8 @@ class Form extends Component {
                 <div className="form-group col-6">
                   <span>Số điện thoại</span>
                   <input
-                    text="number"
-                    pattern=""
+                    pattern="^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$"
+                    text="text"
                     className="form-control"
                     name="soDienThoai"
                     value={this.state.values.soDienThoai}
@@ -132,7 +120,17 @@ class Form extends Component {
                   <p className="text-danger">{this.state.errors.soDienThoai}</p>
                 </div>
               </div>
-              <div className="text-right">{this.renderButton()}</div>
+              <div className="text-right">
+                {this.state.vali ? (
+                  <button type="submit" className="btn btn-success">
+                    Thêm sinh viên
+                  </button>
+                ) : (
+                  <button disabled type="submit" className="btn btn-success">
+                    Thêm sinh viên
+                  </button>
+                )}
+              </div>
             </form>
           </div>
         </div>
